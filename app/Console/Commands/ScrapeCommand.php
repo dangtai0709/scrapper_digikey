@@ -39,7 +39,7 @@ class ScrapeCommand extends Command
     {
         $bot = new \App\Scraper\Digikey();
         // $bot->scrape();
-        $bot->search();
+        $bot->searchByTag("S25FL064LABNFI043");
         return 0;
     }
 }

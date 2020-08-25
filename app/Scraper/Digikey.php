@@ -9,8 +9,6 @@ class Digikey
 
     public function scrape($url)
     {
-        // $url = 'https://www.digikey.com/product-detail/en/cypress-semiconductor-corp/S25FL064LABNFI043/428-4075-1-ND/7318405';
-
         $client = new Client();
         $crawler = $client->request('GET', $url);
         $attributes = $crawler->filter('table#product-attribute-table tr th')->each(
@@ -32,21 +30,19 @@ class Digikey
             }
         );
         $overview = array_merge(...$overview);
-
-       // dump(array_merge($overview,$attributes));
-        // save to DB
-        // $products = new Product;
-        // $products->attributes = json_encode($product);
-        // $products->save();
-        // dump($product);
         return array_merge($overview,$attributes);
     }
     public function searchByTag($tag = null)
     {
-        $url = 'https://www.digikey.com/products/en?keywords=SN097-073-03-A';
+        $url = 'https://www.digikey.com/products/en?keywords='.$tag;
+        // $url = 'https://www.digikey.com/products/en?keywords=SN097-073-03-A';
         $client = new Client();
         $crawler = $client->request('GET', $url);
-        
+        $data = [];
+        if ($crawler->filter('table#product-attribute-table')->count()) 
+        {
+            $data[]= $this->scrape($url);
+        }
         if ($crawler->filter('table#productTable')->count()) {
             $links = $crawler->filter('td.tr-mfgPartNumber a')->each(
                 function (Crawler $node, $i) {
@@ -54,13 +50,9 @@ class Digikey
                 }
             );
             foreach ($links as $link) {
-                dump($this->scrape($link));
+                $data[]= $this->scrape($link);
             }
         }
-        if ($crawler->filter('table#product-attribute-table')->count()) 
-        {
-            dump($this->scrape($url));
-        }   
-        return 0;
+        return $data;
     }
 }

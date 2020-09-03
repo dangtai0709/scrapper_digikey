@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Scraper\Digikey;
+
 class HomeController extends Controller
 {
     /**
@@ -35,14 +35,9 @@ class HomeController extends Controller
         $path = request()->file('file')->getRealPath();
 
         $file = file($path);
-        $bot = new Digikey();
-        $data = [];
-        foreach($file as $row){
-            $string = trim(preg_replace('/\s\s+/', ' ', $row));
-            $data[] = $bot->searchByTag($string);
-        }
-        $data = array_merge(...$data);
-        dd($data);
+        $filename = base_path('resources/pendingProducts/' . date('y-m-d-H-i-s'). '.csv');
+        file_put_contents($filename, $file);
+        session()->flash('status', 'queued for importing');
         return redirect("home");
     }
 }

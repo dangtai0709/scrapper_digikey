@@ -10,8 +10,9 @@
                <div class="alert alert-success" role="alert">
                   {{ session('status') }}
                </div>
-               @endif
+               @else
                {{ __('You are logged in!') }}
+               @endif
                <form method="POST" action="{{ url("import") }}" enctype="multipart/form-data">
                {{ csrf_field() }}
                <div class="input-group mb-3 mt-3 form-group{{ $errors->has('file') ? ' has-error' : '' }}">
